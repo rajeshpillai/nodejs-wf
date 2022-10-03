@@ -26,7 +26,7 @@
       "retry_count": 3,
       "status": "active",
       "consumer_queue_name": "consumer-queue-name",
-      "publisher_queue_nane": "publisher-queue-name",
+      "publisher_queue_name": "publisher-queue-name",
       "output": {
         "read": {
           "key": "step-1"
