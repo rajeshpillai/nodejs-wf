@@ -1,0 +1,27 @@
+{
+  "name": "sample_orchestration_workflow",
+  "description": "A sample DSL displaying how DSLs can be structured for an orchestration use case",
+  "version": 1,
+  "validation_function": "validate_request_body",
+  "response_parser_function": "handle_response",
+  "tasks": [
+    {
+      "name": "vendor_HTTP_API_call",
+      "type": "HTTP",
+      "retry_count": 3,
+      "status": "active",
+      "http_request": {
+          "uri": "https://fakestoreapi.com/products/1",
+          "method": "GET"
+       }
+    },
+    {
+      "name": "RMQ_service_flow",
+      "type": "RMQ",
+      "retry_count": 3,
+      "status": "active",
+      "consumer_queue_name": "consumer-queue-name",
+      "publisher_queue_nane": "publisher-queue-name"
+    }
+  ]
+}
