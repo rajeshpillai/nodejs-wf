@@ -6,13 +6,18 @@
   "response_parser_function": "handle_response",
   "tasks": [
     {
-      "name": "vendor_HTTP_API_call",
+      "name": "Vendor_HTTP_API_call",
       "type": "HTTP",
       "retry_count": 3,
       "status": "active",
       "http_request": {
           "uri": "https://fakestoreapi.com/products/1",
           "method": "GET"
+       },
+       "output": {
+          "write": {
+            "key": "step-1"
+          }
        }
     },
     {
@@ -21,7 +26,15 @@
       "retry_count": 3,
       "status": "active",
       "consumer_queue_name": "consumer-queue-name",
-      "publisher_queue_nane": "publisher-queue-name"
+      "publisher_queue_nane": "publisher-queue-name",
+      "output": {
+        "read": {
+          "key": "step-1"
+        },
+        "write": {
+          "key": "step-2"
+        }
+     }
     }
   ]
 }

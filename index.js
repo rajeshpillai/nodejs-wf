@@ -1,41 +1,57 @@
 const sample = require("./config/sample-1.json");
 const axios = require('axios');
 
-console.log(sample);
+const store = {
 
-function processWF(config) {
+}
+
+async function processWF(config) {
   console.log(`Process name: ${config.name}`);
   console.log(`Description: ${config.description}`);
 
   console.log(`Task Count: ${config.tasks.length}`);
 
-  config.tasks.forEach(t => {
-    processTask(t);
-  })
+  // config.tasks.forEach(async t => {
+  //   await processTask(t);
+  // })
+
+  for(let i = 0; i < config.tasks.length; i++) {
+    await processTask(config.tasks[i]);
+  }
 }
 
-function processTask(task) {
+async function processTask(task) {
   console.log(`Processing task ${task.name}`);
-  if (task.type == "HTTP") processHttpTask(task);
-  if (task.type == "RMQ") processRMQTask(task);
-
+  if (task.type == "HTTP") { 
+    return processHttpTask(task);
+  }
+  if (task.type == "RMQ") {
+    return processRMQTask(task);
+  } 
 }
 
 
-function processHttpTask(task) {
+async function processHttpTask(task) {
   console.log(`<--Processing HTTP task`);
+  const read_key = task?.output?.read?.key;
+  const write_key = task?.output?.write?.key;
 
-  axios.get(task.http_request.uri)
-  .then(function (response) {
-    console.log(response.data);
+  const response =  await axios({
+    method: task.http_request.method || "GET",
+    url: task.http_request.uri
   })
-  .catch(function (error) {
-    console.log(error);
-  });
+
+  store[write_key] = response.data;
+
 }
 
-function processRMQTask(task) {
+async function processRMQTask(task) {
   console.log(`<--Processing RMQ task`);
+
+  const read_key = task?.output?.read?.key;
+  const write_key = task?.output?.write?.key;
+
+  console.log(`Reading: ${read_key}`, store[read_key]);
 
 }
 
