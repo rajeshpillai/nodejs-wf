@@ -1,5 +1,5 @@
 const axios = require("axios");
-async function process(task, store) {
+async function execute(task, store) {
   console.log(`<--Processing HTTP task ${task.name}-${task.http_request.method}`);
   const store_key = task.name;
 
@@ -15,4 +15,4 @@ async function process(task, store) {
   return await response;
 }
 
-module.exports = process;
+module.exports = execute;

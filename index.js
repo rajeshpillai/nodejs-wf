@@ -1,6 +1,7 @@
 const axios = require('axios');
 const sample = require("./config/sample-1.json");
 
+const taskFactory = require("./tasks/task-factory");
 const httpTask = require("./tasks/http-task");
 const rmqTask = require("./tasks/rmq-task");
 
@@ -27,23 +28,11 @@ async function processWF(config) {
 
 async function processTask(task) {
   console.log(`Processing task ${task.name}`);
-  if (task.type == "HTTP") { 
-    return processHttpTask(task);
-  }
-  if (task.type == "RMQ") {
-    return processRMQTask(task);
-  } 
+
+  const taskEngine = taskFactory(task.type);
+  return taskEngine(task, store);
+  
 }
 
-
-async function processHttpTask(task) {
-  const data = await httpTask(task, store);
-  console.log("RESPONSE: ", data);
-}
-
-async function processRMQTask(task) {
- const data = await rmqTask(task, store);
- console.log("RESPONSE: ", data);
-}
 
 processWF(sample);
