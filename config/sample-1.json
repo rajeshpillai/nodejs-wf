@@ -1,40 +1,42 @@
 {
   "name": "sample_orchestration_workflow",
-  "description": "A sample DSL displaying how DSLs can be structured for an orchestration use case",
+  "description": "Orchestration use case",
   "version": 1,
   "validation_function": "validate_request_body",
   "response_parser_function": "handle_response",
   "tasks": [
     {
-      "name": "Vendor_HTTP_API_call",
+      "name": "login",
+      "type": "HTTP",
+      "retry_count": 3,
+      "status": "active",
+      "http_request": {
+          "uri": "https://fakestoreapi.com/auth/login",
+          "method": "POST",
+          "data":{
+            "username": "mor_2314",
+            "password": "83r5^_"
+          }
+       }
+    },
+    {
+      "name": "product_by_id_api",
       "type": "HTTP",
       "retry_count": 3,
       "status": "active",
       "http_request": {
           "uri": "https://fakestoreapi.com/products/1",
           "method": "GET"
-       },
-       "output": {
-          "write": {
-            "key": "step-1"
-          }
        }
     },
     {
-      "name": "RMQ_service_flow",
+      "name": "rmq_service_flow",
       "type": "RMQ",
+      "input": "product_by_id_api",
       "retry_count": 3,
       "status": "active",
       "consumer_queue_name": "consumer-queue-name",
-      "publisher_queue_name": "publisher-queue-name",
-      "output": {
-        "read": {
-          "key": "step-1"
-        },
-        "write": {
-          "key": "step-2"
-        }
-     }
+      "publisher_queue_name": "publisher-queue-name"
     }
   ]
 }

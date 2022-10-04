@@ -11,12 +11,14 @@ async function processWF(config) {
 
   console.log(`Task Count: ${config.tasks.length}`);
 
-  // config.tasks.forEach(async t => {
-  //   await processTask(t);
-  // })
-
   for(let i = 0; i < config.tasks.length; i++) {
-    await processTask(config.tasks[i]);
+    try {
+      console.log(`Processing ${i}`);
+      await processTask(config.tasks[i]);
+    } catch(ex) {
+      console.log("ERROR: ", ex);
+      return ex;
+    }
   }
 }
 
@@ -32,27 +34,23 @@ async function processTask(task) {
 
 
 async function processHttpTask(task) {
-  console.log(`<--Processing HTTP task`);
-  const read_key = task?.output?.read?.key;
-  const write_key = task?.output?.write?.key;
+  console.log(`<--Processing HTTP task ${task.name}-${task.http_request.method}`);
+  const store_key = task.name;
 
   const response =  await axios({
     method: task.http_request.method || "GET",
-    url: task.http_request.uri
+    url: task.http_request.uri,
+    data: task.http_request.data
   })
 
-  store[write_key] = response.data;
-
+  store[store_key] = await response.data;
+  console.log("RESPONSE: ", response.data);
 }
 
 async function processRMQTask(task) {
-  console.log(`<--Processing RMQ task`);
-
-  const read_key = task?.output?.read?.key;
-  const write_key = task?.output?.write?.key;
-
-  console.log(`Reading: ${read_key}`, store[read_key]);
-
+  const input = task.input;
+  console.log(`<--Processing RMQ task: `, input);
+  console.log(`Reading Input: `, store[input]);
 }
 
 processWF(sample);
