@@ -24,6 +24,8 @@ async function processWF(config) {
       return ex;
     }
   }
+
+  console.log(`Process completed!`);
 }
 
 async function processTask(task) {
