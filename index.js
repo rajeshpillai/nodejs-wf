@@ -1,5 +1,8 @@
-const sample = require("./config/sample-1.json");
 const axios = require('axios');
+const sample = require("./config/sample-1.json");
+
+const httpTask = require("./tasks/http-task");
+const rmqTask = require("./tasks/rmq-task");
 
 const store = {
 
@@ -34,23 +37,13 @@ async function processTask(task) {
 
 
 async function processHttpTask(task) {
-  console.log(`<--Processing HTTP task ${task.name}-${task.http_request.method}`);
-  const store_key = task.name;
-
-  const response =  await axios({
-    method: task.http_request.method || "GET",
-    url: task.http_request.uri,
-    data: task.http_request.data
-  })
-
-  store[store_key] = await response.data;
-  console.log("RESPONSE: ", response.data);
+  const data = await httpTask(task, store);
+  console.log("RESPONSE: ", data);
 }
 
 async function processRMQTask(task) {
-  const input = task.input;
-  console.log(`<--Processing RMQ task: `, input);
-  console.log(`Reading Input: `, store[input]);
+ const data = await rmqTask(task, store);
+ console.log("RESPONSE: ", data);
 }
 
 processWF(sample);
