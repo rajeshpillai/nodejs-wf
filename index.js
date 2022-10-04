@@ -1,40 +1,42 @@
-const axios = require('axios');
-const sample = require("./config/sample-1.json");
+var express = require("express")
+var cors = require('cors')
+var app = express()
+var bodyParser = require('body-parser')
 
-const taskFactory = require("./tasks/task-factory");
-const httpTask = require("./tasks/http-task");
-const rmqTask = require("./tasks/rmq-task");
+const wf = require("./wf");
 
-const store = {
+let port = 4000;
 
-}
+app.use(cors())
 
-async function processWF(config) {
-  console.log(`Process name: ${config.name}`);
-  console.log(`Description: ${config.description}`);
-
-  console.log(`Task Count: ${config.tasks.length}`);
-
-  for(let i = 0; i < config.tasks.length; i++) {
-    try {
-      console.log(`Processing ${i}`);
-      await processTask(config.tasks[i]);
-    } catch(ex) {
-      console.log("ERROR: ", ex);
-      return ex;
-    }
+const users = {
+  1: {
+    name: "Tom"
+  },
+  2: {
+    name: "Jerry"
   }
-
-  console.log(`Process completed!`);
-}
-
-async function processTask(task) {
-  console.log(`Processing task ${task.name}`);
-
-  const taskEngine = taskFactory(task.type);
-  return taskEngine(task, store);
-  
 }
 
 
-processWF(sample);
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
+
+app.get('/wfs', function (req, res, next) {
+  res.json(users)
+});
+
+
+app.get('/wfs/:id', async function (req, res, next) {
+  const response = await wf.processTaskByName(req.params.id);
+  res.json(response.data)
+});
+
+
+app.listen(port, function () {
+  console.log(`CORS-enabled Orchestration web server listening on port ${port}`)
+})
+

@@ -6,7 +6,7 @@
   "response_parser_function": "handle_response",
   "tasks": [
     {
-      "name": "login",
+      "name": "login_to_app",
       "type": "HTTP",
       "retry_count": 3,
       "status": "active",
