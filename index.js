@@ -25,12 +25,18 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
-app.get('/wfs', function (req, res, next) {
-  res.json(users)
+app.get('/wfs', async function (req, res, next) {
+  const response = await wf.getAllTasks();
+  res.json(response);
+});
+
+app.get('/wfs/:id', async function (req, res, next) {
+  const response = await wf.getTaskByName(req.params.id);
+  res.json(response);
 });
 
 
-app.get('/wfs/:id', async function (req, res, next) {
+app.post('/wfs/:id', async function (req, res, next) {
   const response = await wf.processTaskByName(req.params.id);
   res.json(response.data)
 });

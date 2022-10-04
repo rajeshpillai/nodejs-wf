@@ -46,6 +46,13 @@ async function processTaskByName(task_name) {
   
 }
 
+// API Helper
+function getTaskByName(task_name) {
+  return sample.tasks.filter(t => {
+    return t.name == task_name;
+  })[0];
+}
+
 function getTaskByName(task_name) {
   return sample.tasks.filter(t => {
     return t.name == task_name;
@@ -53,9 +60,16 @@ function getTaskByName(task_name) {
 }
 
 
+function getAllTasks() {
+  return sample.tasks;
+}
+
+
 
 processWF(sample);
 
 module.exports = {
-  processTaskByName: processTaskByName
+  processTaskByName: processTaskByName,
+  getAllTasks: getAllTasks,
+  getTaskByName: getTaskByName
 }
